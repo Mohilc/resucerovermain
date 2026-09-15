@@ -1052,8 +1052,8 @@ class TerraSenseApp {
       roughness: 0.2
     });
     const cyanTrimMat = new THREE.MeshStandardMaterial({
-      color: 0x00f2fe,
-      emissive: 0x00f2fe,
+      color: 0xf59e0b,
+      emissive: 0xf59e0b,
       emissiveIntensity: 0.6,
       roughness: 0.2
     });
@@ -1068,7 +1068,7 @@ class TerraSenseApp {
       roughness: 0.15
     });
     const lightGlowMat = new THREE.MeshBasicMaterial({
-      color: 0x00f2fe
+      color: 0xf59e0b
     });
     const brakeLightMat = new THREE.MeshBasicMaterial({
       color: 0xef4444
@@ -1200,7 +1200,7 @@ class TerraSenseApp {
     this.roverGroup.add(tlRight);
 
     // 8. Ground-Penetrating Radar (GPR) Emitter & Spotlight
-    this.roverSpotlight = new THREE.SpotLight(0x00f2fe, 4.5, 18, Math.PI / 4, 0.45, 1);
+    this.roverSpotlight = new THREE.SpotLight(0xf59e0b, 4.5, 18, Math.PI / 4, 0.45, 1);
     this.roverSpotlight.position.set(0, 0.25, 0.4);
     this.roverGroup.add(this.roverSpotlight);
     this.droneSpotlight = this.roverSpotlight;
@@ -1210,7 +1210,7 @@ class TerraSenseApp {
     coneGeo.translate(0, -2.25, 0);
     coneGeo.rotateX(Math.PI / 2);
     const coneMat = new THREE.MeshBasicMaterial({
-      color: 0x00f2fe,
+      color: 0xf59e0b,
       transparent: true,
       opacity: 0.12,
       side: THREE.DoubleSide,
