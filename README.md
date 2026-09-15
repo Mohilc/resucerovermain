@@ -48,7 +48,7 @@ To optimize low-latency tactical performance and network reliability in real-wor
 │   1. EDGE HARDWARE & SENSORS    │       │   2. SERVER & AI CORE ENGINES   │       │   3. TACTICAL COMMAND DASHBOARD │
 ├─────────────────────────────────┤       ├─────────────────────────────────┤       ├─────────────────────────────────┤
 │ • Sensor ESP32 (192.168.4.1 AP) │       │ • Flask REST Gateway (server.py)│       │ • Interactive Three.js 3D Grid  │
-│   ├── Ai-Thinker Rd-61 Radar    │       │   ├── LRU Cache & Multi-worker  │       │   ├── Orbiting SAR Drone Cam    │
+│   ├── Ai-Thinker Rd-61 Radar    │       │   ├── LRU Cache & Multi-worker  │       │   ├── Tactical SAR Ground Rover │
 │   ├── BME690 Gas/Temp/Pres/Hum  │       │   ├── MJPEG Stream Proxy        │       │   ├── Soil Strata (0m - 5m)     │
 │   ├── PIR HC-SR501 Motion       │       │   └── Real-time Telemetry Proxy │       │   └── 3D Target Meshes & Sprites│
 │   └── Wi-Fi Hotspot Host        │       │                                 │       │                                 │
@@ -161,7 +161,7 @@ sequenceDiagram
     NIM->>Server: Returns posturisation model, entrapment type & drill entry vectors
     Server->>UI: Fuses data & maps via Cosine GPS math
     UI->>Operator: Sounds target lock alert buzzer
-    UI->>Operator: Visualizes 3D soil strata, vital waveform & drone scan cone
+    UI->>Operator: Visualizes 3D soil strata, vital waveform & rover GPR scan cone
 ```
 
 1. **Edge Sampling & Signal Acquisition**:
@@ -191,7 +191,7 @@ By fusing **multi-sensor edge telemetry**, **high-definition optical camera stre
 1. **Sub-centimetre GPS coordinates** of trapped victims underground using trigonometric Earth-curvature models.
 2. **Real-time vital signal monitoring** (breathing rate, cardiac pulse frequency, chest micro-displacement).
 3. **Live optical inspection & human detection** via YOLOv8 and integrated ESP32-CAM / PC Webcam streaming.
-4. **3D Subsurface visualization** rendered in real time with an orbiting SAR drone, soil stratum layers, and pulse indicators.
+4. **3D Subsurface visualization** rendered in real time with an autonomous SAR ground rover, soil stratum layers, and pulse indicators.
 5. **Estimated oxygen survival countdown** and **tactical drill-entry vectors**.
 
 > *"Every second counts during the golden hour of disaster response. TerraSense AI eliminates guesswork by pinpointing survivors with exact 3D coordinates and drill paths before excavation begins."*
@@ -248,8 +248,8 @@ Powered by NVIDIA NIM (`openai/gpt-oss-20b`) with deterministic physics fallback
 
 ### 7. 🌐 Interactive 3D Subsurface Visualizer (`index.html` & `js/main.js`)
 Built with Three.js WebGL:
-- **Orbiting SAR Drone**: Animates in flight over the survey sector with spinning propellers and dynamic banking.
-- **Spotlight Scan Cone**: Casts an illuminated beam over the ground surface.
+- **Autonomous Tactical SAR Rover**: Traverses the survey sector on all-terrain wheels with 360° spinning LIDAR, front headlights, and a downward Ground-Penetrating Radar (GPR) scan beam.
+- **GPR Downward Scan Cone**: Casts an illuminated beam through the ground and soil strata.
 - **Subsurface Strata & Targets**: Visualizes soil layers (`0m Surface`, `1m Topsoil`, `2m Clay`, `3m Bedrock`), 3D human meshes, pulsing cardiac spheres, dashed probe lines, and floating sub-centimetre GPS sprites.
 
 ### 8. ⏱️ Survival Analytics & Mission Export
@@ -269,7 +269,7 @@ Built with Three.js WebGL:
 | 💻 **PC Webcam Streaming** | Optical Video | Local `/dev/video0` DirectShow streaming for rapid indoor testing |
 | 🌊 **Ai-Thinker Rd-61 Radar** | RF Sensors | 60GHz FMCW non-contact micro-displacement detection for pulse and breath |
 | 🌡️ **BME690 Environmental** | Edge Sensor | Gas resistance, barometric pressure, temperature, and humidity |
-| 🌐 **3D Three.js Visualizer** | WebGL | 4-quadrant subsurface matrix with orbiting drone and GPS sprites |
+| 🌐 **3D Three.js Visualizer** | WebGL | 4-quadrant subsurface matrix with autonomous SAR ground rover and GPS sprites |
 | 📍 **Cosine GPS Geolocation** | Mathematics | Sub-centimetre latitude and longitude trigonometric conversion |
 | 📂 **CSV Batch Multi-Target** | Data Processing | Simultaneous detection and 3D mapping of multiple trapped victims |
 | ⏱️ **Oxygen Survival Timer** | Bio-Analytics | Real-time calculation of remaining breathable air pocket window |

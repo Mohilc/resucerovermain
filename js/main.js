@@ -736,7 +736,7 @@ class TerraSenseApp {
     this._createSoilParticles();
     this._createSweepPlane();
     this._createLighting();
-    this._createDrone();
+    this._createRover();
   }
 
   // ── Ground plane + soil layer slabs + sub-grids ─────────────────
@@ -1029,85 +1029,207 @@ class TerraSenseApp {
     this.threeScene.add(new THREE.AmbientLight(0xffffff, 0.1));
   }
 
-  // ── 3D Drone Creation ─────────────────────────────────────────────
-  _createDrone() {
-    this.droneGroup = new THREE.Group();
-    this.droneGroup.position.set(0, 7.5, 0);
-    this.threeScene.add(this.droneGroup);
+  // ── 3D Tactical SAR Ground Rover Creation ────────────────────────
+  _createRover() {
+    this.roverGroup = new THREE.Group();
+    // Rover base height on the ground plane (ground is at y = 3.0)
+    // With wheel radius ~0.24, wheel hubs at y = 3.24
+    this.roverGroup.position.set(0, 3.24, 0);
+    this.threeScene.add(this.roverGroup);
 
-    const bodyMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, metalness: 0.8, roughness: 0.2 });
-    const accentMat = new THREE.MeshStandardMaterial({ color: 0x00f2fe, emissive: 0x00f2fe, emissiveIntensity: 0.8 });
-    const rotorMat = new THREE.MeshStandardMaterial({ color: 0x020617, metalness: 0.9, roughness: 0.1 });
+    // Backward compatibility pointer for any legacy references
+    this.droneGroup = this.roverGroup;
 
-    const bodyGeo = new THREE.BoxGeometry(0.6, 0.2, 0.6);
-    const body = new THREE.Mesh(bodyGeo, bodyMat);
-    this.droneGroup.add(body);
-
-    const domeGeo = new THREE.SphereGeometry(0.2, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2);
-    const dome = new THREE.Mesh(domeGeo, accentMat);
-    dome.position.y = 0.1;
-    this.droneGroup.add(dome);
-
-    this.rotors = [];
-    this.droneLeds = [];
-    const armGeo = new THREE.CylinderGeometry(0.04, 0.04, 1.2, 8);
-    armGeo.rotateZ(Math.PI / 2);
-
-    const positions = [
-      { x: 0.5, z: 0.5, angle: Math.PI / 4 },
-      { x: -0.5, z: 0.5, angle: -Math.PI / 4 },
-      { x: 0.5, z: -0.5, angle: 3 * Math.PI / 4 },
-      { x: -0.5, z: -0.5, angle: -3 * Math.PI / 4 }
-    ];
-
-    positions.forEach((pos, idx) => {
-      const arm = new THREE.Mesh(armGeo, bodyMat);
-      arm.rotation.y = pos.angle;
-      arm.position.set(pos.x / 2, 0, pos.z / 2);
-      this.droneGroup.add(arm);
-
-      const motorGeo = new THREE.CylinderGeometry(0.07, 0.07, 0.15, 8);
-      const motor = new THREE.Mesh(motorGeo, bodyMat);
-      motor.position.set(pos.x, 0.08, pos.z);
-      this.droneGroup.add(motor);
-
-      const bladeGeo = new THREE.BoxGeometry(0.8, 0.01, 0.05);
-      const blade = new THREE.Mesh(bladeGeo, rotorMat);
-      blade.position.set(pos.x, 0.16, pos.z);
-      this.droneGroup.add(blade);
-      this.rotors.push(blade);
-
-      const ledGeo = new THREE.SphereGeometry(0.04, 8, 8);
-      const ledColor = (idx % 2 === 0) ? 0xef4444 : 0x10b981;
-      const ledMat = new THREE.MeshBasicMaterial({ color: ledColor, transparent: true, opacity: 0.9 });
-      const led = new THREE.Mesh(ledGeo, ledMat);
-      led.position.set(pos.x, -0.06, pos.z);
-      this.droneGroup.add(led);
-      this.droneLeds.push(led);
+    // Materials
+    const chassisMat = new THREE.MeshStandardMaterial({
+      color: 0x111c2e,
+      metalness: 0.85,
+      roughness: 0.25
+    });
+    const armorPlateMat = new THREE.MeshStandardMaterial({
+      color: 0x1e293b,
+      metalness: 0.9,
+      roughness: 0.2
+    });
+    const cyanTrimMat = new THREE.MeshStandardMaterial({
+      color: 0x00f2fe,
+      emissive: 0x00f2fe,
+      emissiveIntensity: 0.6,
+      roughness: 0.2
+    });
+    const tireMat = new THREE.MeshStandardMaterial({
+      color: 0x0a0f18,
+      roughness: 0.8,
+      metalness: 0.1
+    });
+    const rimMat = new THREE.MeshStandardMaterial({
+      color: 0x334155,
+      metalness: 0.9,
+      roughness: 0.15
+    });
+    const lightGlowMat = new THREE.MeshBasicMaterial({
+      color: 0x00f2fe
+    });
+    const brakeLightMat = new THREE.MeshBasicMaterial({
+      color: 0xef4444
     });
 
-    this.droneSpotlight = new THREE.SpotLight(0x38ef7d, 5, 25, Math.PI / 6, 0.6, 1);
-    this.droneSpotlight.position.set(0, -0.1, 0);
-    this.droneGroup.add(this.droneSpotlight);
+    // 1. Lower Main Chassis
+    const lowerBodyGeo = new THREE.BoxGeometry(0.72, 0.22, 1.25);
+    const lowerBody = new THREE.Mesh(lowerBodyGeo, chassisMat);
+    lowerBody.position.set(0, 0.12, 0);
+    this.roverGroup.add(lowerBody);
 
-    const coneGeo = new THREE.ConeGeometry(2.2, 6.0, 32, 1, true);
-    coneGeo.translate(0, -3.0, 0);
+    // 2. Upper Equipment Deck / Cockpit Hood
+    const upperBodyGeo = new THREE.BoxGeometry(0.54, 0.18, 0.78);
+    const upperBody = new THREE.Mesh(upperBodyGeo, armorPlateMat);
+    upperBody.position.set(0, 0.28, -0.05);
+    this.roverGroup.add(upperBody);
+
+    // Cabin Visor / Sensor Window
+    const visorGeo = new THREE.BoxGeometry(0.48, 0.10, 0.22);
+    const visor = new THREE.Mesh(visorGeo, cyanTrimMat);
+    visor.position.set(0, 0.29, 0.28);
+    this.roverGroup.add(visor);
+
+    // 3. Front Bull-Bar / Push Bumper
+    const bumperGeo = new THREE.BoxGeometry(0.80, 0.08, 0.10);
+    const bumper = new THREE.Mesh(bumperGeo, armorPlateMat);
+    bumper.position.set(0, 0.08, 0.68);
+    this.roverGroup.add(bumper);
+
+    // Bumper Bars
+    const bumperBarGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.82, 8);
+    bumperBarGeo.rotateZ(Math.PI / 2);
+    const bumperBar = new THREE.Mesh(bumperBarGeo, cyanTrimMat);
+    bumperBar.position.set(0, 0.16, 0.69);
+    this.roverGroup.add(bumperBar);
+
+    // 4. Rugged All-Terrain Wheels (4-wheel drive)
+    this.roverWheels = [];
+    const wheelPositions = [
+      { x: -0.46, z:  0.44 }, // Front Left
+      { x:  0.46, z:  0.44 }, // Front Right
+      { x: -0.46, z: -0.44 }, // Rear Left
+      { x:  0.46, z: -0.44 }  // Rear Right
+    ];
+
+    const wheelRadius = 0.24;
+    const wheelWidth = 0.14;
+    const tireGeo = new THREE.CylinderGeometry(wheelRadius, wheelRadius, wheelWidth, 18);
+    tireGeo.rotateZ(Math.PI / 2);
+
+    const rimGeo = new THREE.CylinderGeometry(0.12, 0.12, wheelWidth + 0.01, 14);
+    rimGeo.rotateZ(Math.PI / 2);
+
+    const hubGeo = new THREE.CylinderGeometry(0.05, 0.05, wheelWidth + 0.02, 10);
+    hubGeo.rotateZ(Math.PI / 2);
+
+    wheelPositions.forEach(pos => {
+      const wheelGroup = new THREE.Group();
+      wheelGroup.position.set(pos.x, 0, pos.z);
+
+      const tire = new THREE.Mesh(tireGeo, tireMat);
+      const rim = new THREE.Mesh(rimGeo, rimMat);
+      const hub = new THREE.Mesh(hubGeo, cyanTrimMat);
+
+      wheelGroup.add(tire);
+      wheelGroup.add(rim);
+      wheelGroup.add(hub);
+
+      // Suspension arm connecting wheel to chassis
+      const armGeo = new THREE.BoxGeometry(0.08, 0.06, 0.12);
+      const arm = new THREE.Mesh(armGeo, armorPlateMat);
+      arm.position.set(pos.x > 0 ? -0.06 : 0.06, 0, 0);
+      wheelGroup.add(arm);
+
+      this.roverGroup.add(wheelGroup);
+      this.roverWheels.push(wheelGroup);
+    });
+
+    // 5. Sensor Mast & 360° LIDAR Turret
+    const mastGeo = new THREE.CylinderGeometry(0.025, 0.035, 0.32, 8);
+    const mast = new THREE.Mesh(mastGeo, armorPlateMat);
+    mast.position.set(0, 0.48, -0.15);
+    this.roverGroup.add(mast);
+
+    // Spinning LIDAR Pod
+    this.roverLidarTurret = new THREE.Group();
+    this.roverLidarTurret.position.set(0, 0.65, -0.15);
+
+    const lidarBaseGeo = new THREE.CylinderGeometry(0.09, 0.09, 0.08, 16);
+    const lidarBase = new THREE.Mesh(lidarBaseGeo, armorPlateMat);
+    this.roverLidarTurret.add(lidarBase);
+
+    const lidarOpticGeo = new THREE.BoxGeometry(0.14, 0.035, 0.05);
+    const lidarOptic = new THREE.Mesh(lidarOpticGeo, cyanTrimMat);
+    lidarOptic.position.set(0, 0.01, 0.06);
+    this.roverLidarTurret.add(lidarOptic);
+
+    this.roverGroup.add(this.roverLidarTurret);
+
+    // Rear Telemetry Whip Antenna
+    const antGeo = new THREE.CylinderGeometry(0.008, 0.012, 0.55, 6);
+    const antenna = new THREE.Mesh(antGeo, armorPlateMat);
+    antenna.position.set(0.22, 0.55, -0.42);
+    antenna.rotation.x = -0.15;
+    this.roverGroup.add(antenna);
+
+    // Antenna tip LED beacon
+    const antLedGeo = new THREE.SphereGeometry(0.025, 8, 8);
+    const antLed = new THREE.Mesh(antLedGeo, brakeLightMat);
+    antLed.position.set(0.22, 0.82, -0.46);
+    this.roverGroup.add(antLed);
+    this.roverAntennaLed = antLed;
+
+    // 6. Dual Forward LED Headlights
+    const hlGeo = new THREE.BoxGeometry(0.08, 0.04, 0.02);
+    const hlLeft = new THREE.Mesh(hlGeo, lightGlowMat);
+    hlLeft.position.set(-0.24, 0.16, 0.64);
+    const hlRight = new THREE.Mesh(hlGeo, lightGlowMat);
+    hlRight.position.set(0.24, 0.16, 0.64);
+    this.roverGroup.add(hlLeft);
+    this.roverGroup.add(hlRight);
+
+    // 7. Rear Red Taillights
+    const tlLeft = new THREE.Mesh(hlGeo, brakeLightMat);
+    tlLeft.position.set(-0.24, 0.16, -0.63);
+    const tlRight = new THREE.Mesh(hlGeo, brakeLightMat);
+    tlRight.position.set(0.24, 0.16, -0.63);
+    this.roverGroup.add(tlLeft);
+    this.roverGroup.add(tlRight);
+
+    // 8. Ground-Penetrating Radar (GPR) Emitter & Spotlight
+    this.roverSpotlight = new THREE.SpotLight(0x00f2fe, 4.5, 18, Math.PI / 4, 0.45, 1);
+    this.roverSpotlight.position.set(0, 0.25, 0.4);
+    this.roverGroup.add(this.roverSpotlight);
+    this.droneSpotlight = this.roverSpotlight;
+
+    // Volumetric GPR Subsurface Penetration Beam (Cone angled downward through the soil)
+    const coneGeo = new THREE.ConeGeometry(1.6, 4.5, 24, 1, true);
+    coneGeo.translate(0, -2.25, 0);
     coneGeo.rotateX(Math.PI / 2);
     const coneMat = new THREE.MeshBasicMaterial({
-      color: 0x38ef7d,
+      color: 0x00f2fe,
       transparent: true,
       opacity: 0.12,
       side: THREE.DoubleSide,
       depthWrite: false
     });
     this.spotlightBeam = new THREE.Mesh(coneGeo, coneMat);
-    this.spotlightBeam.position.set(0, 0, 0);
-    this.droneGroup.add(this.spotlightBeam);
+    this.spotlightBeam.position.set(0, 0.05, 0.3);
+    this.roverGroup.add(this.spotlightBeam);
 
+    // Target for the spotlight to point down into the surface/subsurface
     this.spotlightTarget = new THREE.Object3D();
-    this.spotlightTarget.position.set(0, 3.0, 0);
+    this.spotlightTarget.position.set(0, 1.5, 1.5);
     this.threeScene.add(this.spotlightTarget);
-    this.droneSpotlight.target = this.spotlightTarget;
+    this.roverSpotlight.target = this.spotlightTarget;
+  }
+
+  // Legacy fallback alias
+  _createDrone() {
+    this._createRover();
   }
 
   // ── Dynamic Subsurface Victim Renderer ───────────────────────────
@@ -1261,64 +1383,99 @@ class TerraSenseApp {
     // Slow particle drift
     if (this.soilParticles) this.soilParticles.rotation.y = time * 0.012;
 
-    // Drone animation
-    if (this.droneGroup) {
-      const orbitRadius = 3.6;
-      const droneSpeed = 0.55;
-      const hoverHeight = 6.6;
+    // Rover animation (Ground-based autonomous patrol & GPR subsurface sweep)
+    const activeVehicle = this.roverGroup || this.droneGroup;
+    if (activeVehicle) {
+      const roverRadius = 3.5;
+      const roverSpeed = 0.36; // Steady tactical patrol speed
+      const groundY = 3.24;    // Ground surface height for chassis
 
-      const droneX = orbitRadius * Math.sin(time * droneSpeed);
-      const droneZ = orbitRadius * Math.cos(time * droneSpeed);
-      const droneY = hoverHeight + 0.28 * Math.sin(time * 1.8);
+      // Position on circular patrol perimeter
+      const roverX = roverRadius * Math.sin(time * roverSpeed);
+      const roverZ = roverRadius * Math.cos(time * roverSpeed);
 
-      this.droneGroup.position.set(droneX, droneY, droneZ);
+      // Subtle suspension terrain micro-bounce
+      const suspensionBounce = Math.sin(time * 8.0) * 0.005;
+      activeVehicle.position.set(roverX, groundY + suspensionBounce, roverZ);
 
-      // Bank tilt
-      this.droneGroup.rotation.z = -0.12 * Math.cos(time * droneSpeed);
-      this.droneGroup.rotation.x = -0.12 * Math.sin(time * droneSpeed);
-      this.droneGroup.rotation.y = -time * droneSpeed + Math.PI / 2;
+      // Direction of travel (tangent velocity vector)
+      const dx = roverRadius * roverSpeed * Math.cos(time * roverSpeed);
+      const dz = -roverRadius * roverSpeed * Math.sin(time * roverSpeed);
+      const headingAngle = Math.atan2(dx, dz);
+      activeVehicle.rotation.y = headingAngle;
 
-      // Spin rotors
-      if (this.rotors) {
-        this.rotors.forEach(r => { r.rotation.y += 0.45; });
-      }
+      // Subtle chassis roll into turns
+      activeVehicle.rotation.z = -0.015 * Math.cos(time * roverSpeed);
+      activeVehicle.rotation.x = 0.012 * Math.sin(time * 6.0);
 
-      // Blink LED lights
-      if (this.droneLeds) {
-        const isLit = Math.sin(time * 7.0) > 0;
-        this.droneLeds.forEach(led => {
-          led.material.opacity = isLit ? 0.95 : 0.15;
+      // 4-Wheel Drive: Rotate wheels along X-axis proportional to forward motion
+      if (this.roverWheels) {
+        this.roverWheels.forEach(w => {
+          w.rotation.x += 0.07;
         });
       }
 
-      // Drone GPS coordinates updates on UI
-      const dLat = this.gpsBase.lat + (droneZ / 111320.0);
-      const dLon = this.gpsBase.lon + (droneX / 111320.0);
+      // Continuous 360° LIDAR turret rotation
+      if (this.roverLidarTurret) {
+        this.roverLidarTurret.rotation.y += 0.08;
+      }
 
+      // Blinking antenna warning beacon
+      if (this.roverAntennaLed) {
+        const isBlinking = Math.sin(time * 6.0) > 0;
+        this.roverAntennaLed.material.opacity = isBlinking ? 1.0 : 0.2;
+      }
+
+      // Rover GPS coordinates & Speed updates on UI
+      const dLat = this.gpsBase.lat + (roverZ / 111320.0);
+      const dLon = this.gpsBase.lon + (roverX / 111320.0);
+
+      const roverSpeedVal = document.getElementById('roverSpeedVal');
       const droneAltitudeVal = document.getElementById('droneAltitudeVal');
+      const roverStatusVal = document.getElementById('roverStatusVal');
       const droneStatusVal = document.getElementById('droneStatusVal');
+      const roverLatitudeVal = document.getElementById('roverLatitudeVal');
       const droneLatitudeVal = document.getElementById('droneLatitudeVal');
+      const roverLongitudeVal = document.getElementById('roverLongitudeVal');
       const droneLongitudeVal = document.getElementById('droneLongitudeVal');
 
-      if (droneAltitudeVal) droneAltitudeVal.textContent = `${droneY.toFixed(2)} M`;
-      if (droneStatusVal) {
-        droneStatusVal.textContent = this.isScanning ? "SURFACE SWEEP" : "ORBITAL SCAN";
-        droneStatusVal.style.color = this.isScanning ? "var(--accent-rose)" : "var(--accent-emerald)";
-      }
-      if (droneLatitudeVal) droneLatitudeVal.textContent = dLat.toFixed(6);
-      if (droneLongitudeVal) droneLongitudeVal.textContent = dLon.toFixed(6);
+      const speedReading = `${(1.2 + 0.15 * Math.sin(time * 2.0)).toFixed(1)} M/S`;
+      if (roverSpeedVal) roverSpeedVal.textContent = speedReading;
+      if (droneAltitudeVal && droneAltitudeVal !== roverSpeedVal) droneAltitudeVal.textContent = speedReading;
 
-      // Point spotlight target
+      const statusReading = this.isScanning ? "GROUND GPR SWEEP" : "AUTONOMOUS PATROL";
+      const statusColor = this.isScanning ? "var(--accent-rose)" : "var(--accent-emerald)";
+      if (roverStatusVal) {
+        roverStatusVal.textContent = statusReading;
+        roverStatusVal.style.color = statusColor;
+      }
+      if (droneStatusVal && droneStatusVal !== roverStatusVal) {
+        droneStatusVal.textContent = statusReading;
+        droneStatusVal.style.color = statusColor;
+      }
+
+      if (roverLatitudeVal) roverLatitudeVal.textContent = dLat.toFixed(6);
+      if (droneLatitudeVal && droneLatitudeVal !== roverLatitudeVal) droneLatitudeVal.textContent = dLat.toFixed(6);
+
+      if (roverLongitudeVal) roverLongitudeVal.textContent = dLon.toFixed(6);
+      if (droneLongitudeVal && droneLongitudeVal !== roverLongitudeVal) droneLongitudeVal.textContent = dLon.toFixed(6);
+
+      // Point GPR spotlight target ahead on the ground or into the active sector
       if (this.spotlightTarget) {
         if (this.isScanning) {
-          this.spotlightTarget.position.set(5.0 * Math.sin(time * 4.0), 3.0, 5.0 * Math.cos(time * 4.0));
+          this.spotlightTarget.position.set(5.0 * Math.sin(time * 4.0), 1.0, 5.0 * Math.cos(time * 4.0));
         } else if (this.activeSectorIds && this.activeSectorIds.length > 0) {
           const sd = SECTORS.find(s => s.id === this.activeSectorIds[0]);
           if (sd) {
-            this.spotlightTarget.position.set(sd.cx, 3.0, sd.cz);
+            this.spotlightTarget.position.set(sd.cx, 1.5, sd.cz);
           }
         } else {
-          this.spotlightTarget.position.set(droneX, 3.0, droneZ);
+          // Forward projected ground target along the rover's heading
+          this.spotlightTarget.position.set(
+            roverX + Math.sin(headingAngle) * 2.0,
+            1.5,
+            roverZ + Math.cos(headingAngle) * 2.0
+          );
         }
       }
     }

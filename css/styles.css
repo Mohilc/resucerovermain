@@ -1319,7 +1319,8 @@ footer.app-footer {
   color: #fff;
 }
 
-/* ==================== DRONE HUD & BATCH SUMMARY SYSTEM ==================== */
+/* ==================== ROVER & DRONE HUD SYSTEM ==================== */
+.rover-hud-card,
 .drone-hud-card {
   background: rgba(13, 20, 36, 0.9);
   border: 1px solid var(--border-color);
@@ -1328,6 +1329,7 @@ footer.app-footer {
   margin-bottom: 0.85rem;
   box-shadow: inset 0 0 15px rgba(56, 189, 248, 0.05);
 }
+.rover-hud-title,
 .drone-hud-title {
   font-family: var(--font-tech);
   font-weight: 800;
@@ -1340,23 +1342,27 @@ footer.app-footer {
   letter-spacing: 0.5px;
   text-transform: uppercase;
 }
+.rover-hud-grid,
 .drone-hud-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.5rem;
 }
+.rover-hud-item,
 .drone-hud-item {
   background: rgba(2, 6, 17, 0.5);
   border: 1px solid rgba(255, 255, 255, 0.04);
   padding: 0.4rem 0.5rem;
   border-radius: var(--radius-sm);
 }
+.rover-hud-label,
 .drone-hud-label {
   font-family: var(--font-tech);
   font-size: 0.68rem;
   color: var(--text-dim);
   display: block;
 }
+.rover-hud-val,
 .drone-hud-val {
   font-family: var(--font-mono);
   font-size: 0.8rem;
