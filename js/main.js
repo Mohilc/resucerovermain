@@ -1818,10 +1818,10 @@ class TerraSenseApp {
         options: {
           responsive: true, maintainAspectRatio: false, animation: { duration: 350 },
           scales: {
-            x: { ticks: { color: '#4e6178', font: { family: 'JetBrains Mono', size: 8 } }, grid: { color: 'rgba(255,255,255,0.02)' } },
-            y: { ticks: { color: '#4e6178', font: { family: 'JetBrains Mono', size: 8 } }, grid: { color: 'rgba(255,255,255,0.03)' }, min: -1.5, max: 1.5 }
+            x: { ticks: { color: '#cbd5e1', font: { family: 'JetBrains Mono', size: 9 } }, grid: { color: 'rgba(255,255,255,0.05)' } },
+            y: { ticks: { color: '#cbd5e1', font: { family: 'JetBrains Mono', size: 9 } }, grid: { color: 'rgba(255,255,255,0.06)' }, min: -1.5, max: 1.5 }
           },
-          plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Rajdhani', weight: 'bold' } } } }
+          plugins: { legend: { labels: { color: '#f8fafc', font: { family: 'Rajdhani', weight: 'bold', size: 12 } } } }
         }
       });
     }
@@ -1832,15 +1832,15 @@ class TerraSenseApp {
         type: 'bar',
         data: {
           labels: Array.from({ length: 15 }, (_, i) => `${(i * 0.5).toFixed(1)}m`),
-          datasets: [{ label: 'Dielectric Attenuation (dB)', backgroundColor: 'rgba(59,130,246,0.45)', borderColor: '#3b82f6', borderWidth: 1.5, data: Array(15).fill(0) }]
+          datasets: [{ label: 'Dielectric Attenuation (dB)', backgroundColor: 'rgba(245,158,11,0.4)', borderColor: '#f59e0b', borderWidth: 1.5, data: Array(15).fill(0) }]
         },
         options: {
           responsive: true, maintainAspectRatio: false, animation: { duration: 350 },
           scales: {
-            x: { ticks: { color: '#4e6178', font: { family: 'JetBrains Mono', size: 8 } }, grid: { display: false } },
-            y: { ticks: { color: '#4e6178', font: { family: 'JetBrains Mono', size: 8 } }, grid: { color: 'rgba(255,255,255,0.03)' } }
+            x: { ticks: { color: '#cbd5e1', font: { family: 'JetBrains Mono', size: 9 } }, grid: { display: false } },
+            y: { ticks: { color: '#cbd5e1', font: { family: 'JetBrains Mono', size: 9 } }, grid: { color: 'rgba(255,255,255,0.06)' } }
           },
-          plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Rajdhani', weight: 'bold' } } } }
+          plugins: { legend: { labels: { color: '#f8fafc', font: { family: 'Rajdhani', weight: 'bold', size: 12 } } } }
         }
       });
     }
@@ -1851,15 +1851,15 @@ class TerraSenseApp {
         type: 'line',
         data: {
           labels: ['Scan 01', 'Scan 02', 'Scan 03', 'Scan 04', 'Scan 05'],
-          datasets: [{ label: 'Human Life Consensus (%)', borderColor: '#fbbf24', backgroundColor: 'rgba(251,191,36,0.05)', borderWidth: 2, data: [15, 12, 92, 98, 98.6], fill: true }]
+          datasets: [{ label: 'Human Life Consensus (%)', borderColor: '#fbbf24', backgroundColor: 'rgba(251,191,36,0.12)', borderWidth: 2, data: [15, 12, 92, 98, 98.6], fill: true }]
         },
         options: {
           responsive: true, maintainAspectRatio: false, animation: { duration: 350 },
           scales: {
-            x: { ticks: { color: '#4e6178' }, grid: { display: false } },
-            y: { ticks: { color: '#4e6178' }, grid: { color: 'rgba(255,255,255,0.03)' }, min: 0, max: 100 }
+            x: { ticks: { color: '#cbd5e1', font: { family: 'JetBrains Mono', size: 9 } }, grid: { display: false } },
+            y: { ticks: { color: '#cbd5e1', font: { family: 'JetBrains Mono', size: 9 } }, grid: { color: 'rgba(255,255,255,0.06)' }, min: 0, max: 100 }
           },
-          plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Rajdhani', weight: 'bold' } } } }
+          plugins: { legend: { labels: { color: '#f8fafc', font: { family: 'Rajdhani', weight: 'bold', size: 12 } } } }
         }
       });
     }

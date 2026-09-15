@@ -7,7 +7,7 @@
   <title>RESCUE ROVER AI | Autonomous Ground SAR Rover Bio-Detection & Search System</title>
   <meta name="description"
     content="Autonomous Ground Rover Search & Rescue Command Platform integrating BME280, PIR, and 24 GHz Radar multi-sensor fusion with 6 ML ensemble models & GPR subsurface scanning.">
-  <meta name="theme-color" content="#0a0806">
+  <meta name="theme-color" content="#07090e">
 
   <!-- Open Graph & Social Cards -->
   <meta property="og:title" content="RESCUE ROVER AI — Ground-Based SAR Command System">
@@ -29,27 +29,25 @@
 
   <!-- Google Fonts (non-blocking with swap) -->
   <link rel="preload" as="style"
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;700;800&display=swap"
     onload="this.onload=null;this.rel='stylesheet'">
   <noscript>
     <link rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Rajdhani:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;700;800&display=swap">
   </noscript>
 
   <!-- CSS Stylesheet -->
   <link rel="stylesheet" href="css/styles.css">
 
-
   <!-- External Libraries via CDN (deferred to avoid render-blocking) -->
   <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 </head>
 
 <body>
 
-  <!-- SVG Gradient Definitions for SVG Gauges -->
+  <!-- SVG Gradient Definitions for Radial Gauges -->
   <svg style="width:0;height:0;position:absolute;">
     <defs>
       <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -65,7 +63,7 @@
     <div class="brand-container">
       <div class="brand-logo">
         <svg viewBox="0 0 24 24">
-          <rect x="3" y="9" width="18" height="7" rx="2" fill="currentColor" opacity="0.7"/>
+          <rect x="3" y="9" width="18" height="7" rx="2" fill="currentColor" opacity="0.8"/>
           <circle cx="7" cy="18" r="2.5" fill="currentColor"/>
           <circle cx="17" cy="18" r="2.5" fill="currentColor"/>
           <path d="M7 9V5l5-2 5 2v4" fill="none" stroke="currentColor" stroke-width="1.5"/>
@@ -74,41 +72,38 @@
       </div>
       <div class="brand-text">
         <h1>RESCUE ROVER AI</h1>
-        <p>Autonomous Ground SAR Rover — Subsurface Bio-Detection Command</p>
+        <p>Tactical Autonomous Ground SAR Rover — Subsurface Bio-Radar Command</p>
       </div>
     </div>
 
     <div class="header-status-bar">
       <div class="status-pill">
         <span>HOST IP:</span>
-        <input type="text" id="inputHostIp" placeholder="localhost"
-          style="background: rgba(255,255,255,0.06); border: 1px solid var(--border-color); color: #fff; border-radius: var(--radius-sm); padding: 2px 6px; font-family: var(--font-mono); font-size: 11px; width: 110px; outline: none;" />
-        <button id="btnApplyHostIp"
-          style="background: var(--primary-cyan); border: none; color: #040711; font-weight: 700; border-radius: 2px; font-size: 10px; padding: 2px 6px; cursor: pointer;">SET</button>
+        <input type="text" id="inputHostIp" placeholder="localhost" />
+        <button id="btnApplyHostIp">SET</button>
       </div>
       <div class="status-pill">
         <span class="pulse-dot scanning" id="pulseDot"></span>
-        <span>ARRAY STATUS: <strong id="headerArrayStatus" style="color: var(--primary-cyan)">READY FOR
-            SCAN</strong></span>
+        <span>ARRAY STATUS: <strong id="headerArrayStatus" style="color: var(--primary-cyan)">READY FOR SCAN</strong></span>
       </div>
       <div class="status-pill">
         <span>AI ACCURACY: <strong id="headerAccuracyVal" style="color: var(--accent-emerald)">98.6%</strong></span>
       </div>
       <div class="status-pill">
-        <span>ENGINE: <strong style="color: var(--text-main)">AI Analytics Engine</strong></span>
+        <span>ENGINE: <strong style="color: #ffffff">AI Analytics Engine</strong></span>
       </div>
       <!-- Vision Fusion Indicator — shown dynamically by JS when camera data is fresh -->
       <div id="fusionStatusPill" class="status-pill"
-        style="display:none;border:1px solid var(--primary-cyan);border-radius:4px;font-family:var(--font-tech);font-size:0.72rem;font-weight:600;letter-spacing:0.04em;padding:3px 10px;transition:all 0.3s;align-items:center;gap:5px;">
+        style="display:none;border:1px solid var(--primary-cyan);border-radius:4px;font-family:var(--font-tech);font-size:0.75rem;font-weight:700;letter-spacing:0.04em;padding:4px 10px;transition:all 0.3s;align-items:center;gap:6px;">
       </div>
     </div>
   </header>
 
-  <!-- Control & Preset Toolbar -->
+  <!-- Control & Action Toolbar -->
   <nav class="control-toolbar">
     <div class="scan-controls">
       <button class="btn-main btn-primary" id="btnInitiateScan">
-        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2">
+        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" stroke-width="2.5">
           <circle cx="12" cy="12" r="10" />
           <path d="M12 8v8M8 12h8" />
         </svg>
@@ -153,10 +148,12 @@
     </div>
   </div>
 
-  <!-- Main Dashboard Grid Layout -->
+  <!-- Main Dashboard Grid Layout (Balanced 3-Column Symmetrical Grid) -->
   <main class="dashboard-grid">
 
-    <!-- Column 1: AI Prediction & Telemetry Controls -->
+    <!-- =========================================================================
+         COLUMN 1: AI CONSENSUS PREDICTION & ROVER TELEMETRY HUD
+         ========================================================================= -->
     <section class="card-panel">
       <div class="panel-header">
         <div class="panel-title">
@@ -167,7 +164,7 @@
           4-AI MODEL CONSENSUS PREDICTION
         </div>
         <span class="panel-badge"
-          style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); border-color: rgba(16, 185, 129, 0.35);">MULTI-AI</span>
+          style="background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); border-color: rgba(16, 185, 129, 0.4);">MULTI-AI</span>
       </div>
 
       <!-- Batch Human Detection Summary Panel -->
@@ -179,6 +176,7 @@
         <div class="batch-badge-counter clear" id="batchSummaryCount">0</div>
       </div>
 
+      <!-- Radial Circular Gauge Card -->
       <div class="prediction-card">
         <div class="gauge-wrapper">
           <svg class="gauge-svg" viewBox="0 0 200 200">
@@ -192,7 +190,7 @@
         </div>
 
         <div class="detection-banner clear" id="detectionBanner">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10" />
             <line x1="12" y1="8" x2="12" y2="12" />
             <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -201,10 +199,8 @@
         </div>
       </div>
 
-
-
       <!-- Telemetry Readouts -->
-      <div class="telemetry-grid" style="margin-top: 0.9rem;">
+      <div class="telemetry-grid">
         <div class="telemetry-item">
           <span class="telemetry-label">ESTIMATED DEPTH</span>
           <span class="telemetry-value highlight" id="telemetryDepth">--</span>
@@ -226,17 +222,17 @@
           <span class="telemetry-value highlight" id="telemetryGps"
             style="display: flex; justify-content: space-between; align-items: center; gap: 0.5rem;">
             <span id="telemetryGpsText">--</span>
-            <button id="btnCopyGps" class="btn-preset-mini" style="margin: 0; padding: 2px 6px; font-size: 0.65rem;"
+            <button id="btnCopyGps" class="btn-preset-mini" style="margin: 0; padding: 2px 7px; font-size: 0.68rem;"
               title="Copy GPS Coordinates">COPY</button>
           </span>
         </div>
       </div>
 
       <!-- Tactical Rover Status & GPS Telemetry HUD -->
-      <div class="rover-hud-card drone-hud-card" id="roverHudCard" style="margin-top: 0.9rem;">
+      <div class="rover-hud-card drone-hud-card" id="roverHudCard">
         <div class="rover-hud-title drone-hud-title">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="3" y="10" width="18" height="6" rx="2" fill="rgba(0,242,254,0.15)"/>
+            <rect x="3" y="10" width="18" height="6" rx="2" fill="rgba(245,158,11,0.2)"/>
             <circle cx="7" cy="18" r="2.5"/>
             <circle cx="17" cy="18" r="2.5"/>
             <path d="M7 10V6l4-2h4l2 4"/>
@@ -266,31 +262,31 @@
       </div>
 
       <!-- Search & Rescue Field Operation Advisory -->
-      <div style="margin-top: 1.1rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.9rem;">
+      <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 0.85rem; margin-top: 0.4rem;">
         <div
-          style="font-family: var(--font-tech); font-size: 0.95rem; font-weight: 700; color: var(--primary-cyan); margin-bottom: 0.55rem; display: flex; align-items: center; gap: 0.45rem;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          style="font-family: var(--font-tech); font-size: 0.92rem; font-weight: 800; color: var(--primary-cyan); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.45rem;">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
           </svg>
           SEARCH & RESCUE COMMAND ADVISORY
         </div>
         <div id="rescueAdvisoryContent">
           <div
-            style="padding: 0.8rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius-sm); text-align: center; color: var(--text-muted); font-size: 0.8rem;">
+            style="padding: 0.75rem; background: rgba(18, 26, 42, 0.7); border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius-sm); text-align: center; color: var(--text-muted); font-size: 0.78rem;">
             PRESS 'INITIATE SEARCH SCAN' TO GENERATE RESCUE FIELD STRATEGY & OXYGEN ESTIMATION.
           </div>
         </div>
       </div>
 
-      <!-- ── SURVIVAL STATUS PANEL (filled by JS after detection) ── -->
+      <!-- Survival Status Panel (filled by JS after detection) -->
       <div id="survivalPanel"
-        style="display:none; margin-top:1rem; border:1px solid rgba(255,255,255,0.12); border-radius:var(--radius-md); padding:0.85rem; transition:border-color 0.4s ease, background 0.4s ease;">
-        <!-- Content injected by JS -->
+        style="display:none; margin-top:0.85rem; border:1px solid rgba(245,158,11,0.3); border-radius:var(--radius-md); padding:0.85rem; transition:border-color 0.4s ease, background 0.4s ease;">
       </div>
     </section>
 
-
-    <!-- Column 2: Interactive 3D Subsurface Map & Lab Cam -->
+    <!-- =========================================================================
+         COLUMN 2: 3D SUBSURFACE MAP & PRECISION STRATUM INSPECTOR
+         ========================================================================= -->
     <section class="card-panel panel-3d">
       <div class="panel-header">
         <div class="panel-title">
@@ -310,6 +306,7 @@
         </div>
       </div>
 
+      <!-- Interactive 3D WebGL Canvas -->
       <div id="canvas3d-container">
         <div class="map-3d-overlay">
           <button class="map-control-btn" id="btnResetCamera" title="Reset View">
@@ -321,209 +318,65 @@
         </div>
 
         <div id="map3dTelemetryOverlay"
-          style="display: none; position: absolute; top: 0.9rem; left: 0.9rem; background: rgba(4, 7, 17, 0.9); backdrop-filter: blur(10px); border: 1px solid var(--accent-emerald); border-radius: var(--radius-sm); padding: 0.65rem 0.85rem; font-family: var(--font-mono); font-size: 0.73rem; color: var(--text-main); z-index: 10; line-height: 1.55; box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);">
+          style="display: none; position: absolute; top: 0.9rem; left: 0.9rem; background: rgba(8, 12, 20, 0.92); backdrop-filter: blur(10px); border: 1px solid var(--accent-emerald); border-radius: var(--radius-sm); padding: 0.65rem 0.85rem; font-family: var(--font-mono); font-size: 0.73rem; color: #ffffff; z-index: 10; line-height: 1.55; box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);">
           <!-- Dynamic JS Telemetry -->
         </div>
 
         <div class="map-3d-legend">
-          <div class="legend-item"><span class="legend-color" style="background:#00f2fe"></span><span>Sector A — NW
-              Quadrant</span></div>
-          <div class="legend-item"><span class="legend-color" style="background:#fbbf24"></span><span>Sector B — NE
-              Quadrant</span></div>
-          <div class="legend-item"><span class="legend-color" style="background:#10b981"></span><span>Sector C — SW
-              Quadrant</span></div>
-          <div class="legend-item"><span class="legend-color" style="background:#8b5cf6"></span><span>Sector D — SE
-              Quadrant</span></div>
-          <div class="legend-item"><span class="legend-color"
-              style="background:#ffffff; opacity:0.5"></span><span>Sector Divider Lines</span></div>
-          <div class="legend-item"><span class="legend-color" style="background:#f43f5e"></span><span>Signal Wave
-              Propagation</span></div>
-        </div>
-      </div>
-
-      <!-- Hardware Edge Nodes (Positioned directly under 3D Subsurface Map) -->
-      <div class="hardware-nodes-grid"
-        style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-top: 1rem; margin-bottom: 0.9rem;">
-
-        <!-- Left Box: ESP32 Live Sensors -->
-        <div class="esp32-telemetry-panel"
-          style="padding: 0.85rem; background: rgba(16, 20, 30, 0.6); border: 1px solid rgba(0, 242, 254, 0.15); border-radius: 6px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);">
-          <div
-            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; border-bottom: 1px dashed rgba(0, 242, 254, 0.15); padding-bottom: 0.35rem;">
-            <div style="display: flex; align-items: center;">
-              <span class="pulse-telemetry-led led-pulse-inactive" id="espLed"
-                style="width: 8px; height: 8px; border-radius: 50%; background: #6b7280; display: inline-block; margin-right: 0.45rem;"></span>
-              <strong
-                style="color: var(--primary-cyan); font-size: 0.78rem; font-family: var(--font-mono); letter-spacing: 0.5px;">LIVE
-                ESP32 SENSORS</strong>
-            </div>
-            <label class="switch-container" style="display: inline-flex; align-items: center; cursor: pointer;">
-              <span
-                style="font-size: 0.65rem; color: var(--text-muted); font-family: var(--font-mono); margin-right: 0.35rem;"
-                id="espToggleText">OFFLINE</span>
-              <input type="checkbox" id="espTelemetryToggle">
-              <div class="custom-toggle-track"
-                style="width: 32px; height: 16px; background: rgba(255,255,255,0.1); border-radius: 10px; position: relative; border: 1px solid rgba(255,255,255,0.2); transition: 0.3s; margin-left: 0.2rem;">
-                <div class="custom-toggle-thumb"
-                  style="width: 12px; height: 12px; background: #9ca3af; border-radius: 50%; position: absolute; top: 1px; left: 1px; transition: 0.3s;">
-                </div>
-              </div>
-            </label>
-          </div>
-
-          <div id="espTelemetryDetails"
-            style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.4rem 0.6rem; font-size: 0.7rem; font-family: var(--font-mono);">
-            <div style="color: var(--text-muted);">PIR: <span id="espPir"
-                style="color: #fff; font-weight: bold;">--</span></div>
-            <div style="color: var(--text-muted);">RSSI: <span id="espRssi"
-                style="color: #fff; font-weight: bold;">--</span></div>
-            <div style="color: var(--text-muted);">Radar: <span id="espRadarState"
-                style="color: #fff; font-weight: bold;">--</span></div>
-            <div style="color: var(--text-muted);">Range: <span id="espRadarDist"
-                style="color: #fff; font-weight: bold;">--</span></div>
-            <div style="color: var(--text-muted);">Temp: <span id="espTemp"
-                style="color: #fff; font-weight: bold;">--</span></div>
-            <div style="color: var(--text-muted);">Humid: <span id="espHumid"
-                style="color: #fff; font-weight: bold;">--</span></div>
-          </div>
-        </div>
-
-        <!-- Right Box: ESP32-CAM Optical AI Node -->
-        <div class="esp32-cam-panel"
-          style="padding: 0.85rem; background: rgba(16, 20, 30, 0.6); border: 1px solid rgba(0, 242, 254, 0.25); border-radius: 6px; box-shadow: 0 0 15px rgba(0, 0, 0, 0.4);">
-          <div
-            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; border-bottom: 1px dashed rgba(0, 242, 254, 0.2); padding-bottom: 0.35rem;">
-            <div style="display: flex; align-items: center; gap: 0.4rem;">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                style="color: var(--primary-cyan);">
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                <circle cx="12" cy="13" r="4" />
-              </svg>
-              <strong
-                style="color: var(--primary-cyan); font-size: 0.78rem; font-family: var(--font-mono); letter-spacing: 0.5px;">ESP32-CAM
-                OPTICAL FEED</strong>
-            </div>
-            <button id="btnCamModelInfo" class="btn-preset-mini"
-              style="font-size: 0.65rem; padding: 2px 6px; margin: 0;"
-              title="View ESP32 Camera Models & Pinouts">PINOUTS</button>
-          </div>
-
-          <!-- Video Stream Container -->
-          <div class="cam-stream-container"
-            style="position: relative; width: 100%; height: 220px; background: #000; border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255,255,255,0.1);">
-            <img id="espCamStreamImg" src="" alt="ESP32-CAM Live Feed"
-              style="width: 100%; height: 100%; object-fit: cover; display: none;" />
-            <div id="espCamPlaceholder"
-              style="text-align: center; color: var(--text-muted); font-size: 0.72rem; font-family: var(--font-mono); padding: 0.4rem;">
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                style="margin: 0 auto 0.3rem; display: block; opacity: 0.5;">
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                <circle cx="12" cy="13" r="4" />
-              </svg>
-              <span id="espCamStatusText">CAMERA NODE OFFLINE</span>
-            </div>
-            <div id="espCamOverlayBadge"
-              style="position: absolute; top: 5px; left: 5px; background: rgba(0,0,0,0.7); backdrop-filter: blur(4px); border: 1px solid var(--border-color); border-radius: 3px; padding: 2px 5px; font-family: var(--font-mono); font-size: 0.6rem; color: #fff; display: flex; align-items: center; gap: 4px; z-index: 15;">
-              <span id="espCamDot"
-                style="width: 5px; height: 5px; border-radius: 50%; background: #9ca3af; display: inline-block;"></span>
-              <span id="espCamModelBadge">AI-THINKER</span>
-            </div>
-            <div id="espCamYoloAlert"
-              style="display: none; position: absolute; top: 5px; right: 5px; background: rgba(244,63,94,0.9); backdrop-filter: blur(4px); border: 1px solid #f43f5e; border-radius: 3px; padding: 2.5px 6px; font-family: var(--font-mono); font-size: 0.6rem; color: #fff; z-index: 15; font-weight: 700; letter-spacing: 0.5px; animation: blinker 1.2s linear infinite;">
-              ⚠ HUMAN DETECTED
-            </div>
-          </div>
-
-          <!-- Controls Toolbar -->
-          <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem;">
-            <!-- Quick Source Presets -->
-            <div style="display: flex; gap: 0.25rem; font-size: 0.6rem; font-family: var(--font-mono);">
-              <button id="btnPresetEspCam" class="btn-preset-mini"
-                style="flex: 1; padding: 2px 4px; font-size: 0.6rem; margin: 0;"
-                title="Connect to ESP32-CAM (192.168.4.2/stream)">ESP32-CAM</button>
-              <button id="btnPresetWebcam" class="btn-preset-mini"
-                style="flex: 1; padding: 2px 4px; font-size: 0.6rem; margin: 0; color: var(--primary-cyan); border-color: rgba(0,242,254,0.3);"
-                title="Stream & Detect from Local PC/Laptop Webcam">PC WEBCAM</button>
-            </div>
-
-            <div style="display: flex; gap: 0.35rem;">
-              <input type="text" id="inputCamIp" placeholder="192.168.4.2/stream, :81, or webcam"
-                style="flex: 1; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.15); color: #fff; border-radius: 3px; padding: 2px 5px; font-family: var(--font-mono); font-size: 0.68rem; outline: none;" />
-              <button id="btnConnectCam"
-                style="background: var(--primary-cyan); border: none; color: #040711; font-weight: 700; border-radius: 3px; font-size: 0.65rem; padding: 2px 7px; cursor: pointer;">CONNECT</button>
-            </div>
-            <div style="display: flex; justify-content: space-between; gap: 0.35rem;">
-              <button id="btnToggleFlash" class="btn-preset-mini"
-                style="flex: 1; margin: 0; padding: 2px 3px; font-size: 0.62rem;" title="Toggle Onboard Flash LED">FLASH
-                LIGHT</button>
-              <button id="btnCaptureSnapshot" class="btn-preset-mini"
-                style="flex: 1; margin: 0; padding: 2px 3px; font-size: 0.62rem;"
-                title="Capture Frame for AI Analysis">SNAPSHOT</button>
-              <button id="btnToggleYolo" class="btn-preset-mini"
-                style="flex: 1; margin: 0; padding: 2px 3px; font-size: 0.62rem;"
-                title="Toggle YOLOv8 Human Object Detection">YOLO AI: OFF</button>
-              <button id="btnDemoCamStream" class="btn-preset-mini"
-                style="flex: 1; margin: 0; padding: 2px 3px; font-size: 0.62rem;"
-                title="Toggle Synthetic Demo Stream">DEMO FEED</button>
-            </div>
-          </div>
+          <div class="legend-item"><span class="legend-color" style="background:#00f2fe"></span><span>Sector A — NW Quadrant</span></div>
+          <div class="legend-item"><span class="legend-color" style="background:#fbbf24"></span><span>Sector B — NE Quadrant</span></div>
+          <div class="legend-item"><span class="legend-color" style="background:#10b981"></span><span>Sector C — SW Quadrant</span></div>
+          <div class="legend-item"><span class="legend-color" style="background:#8b5cf6"></span><span>Sector D — SE Quadrant</span></div>
+          <div class="legend-item"><span class="legend-color" style="background:#ffffff; opacity:0.6"></span><span>Sector Dividers</span></div>
+          <div class="legend-item"><span class="legend-color" style="background:#ef4444"></span><span>Doppler Radar Beam</span></div>
         </div>
       </div>
 
       <!-- 4-Sector Status Panel -->
-      <div style="margin-top:0.9rem; border-top:1px solid rgba(255,255,255,0.07); padding-top:0.75rem;">
+      <div style="margin-top: 0.85rem;">
         <div
-          style="font-family:var(--font-tech);font-size:0.88rem;font-weight:700;color:var(--primary-cyan);margin-bottom:0.5rem;display:flex;align-items:center;gap:0.4rem;">
+          style="font-family: var(--font-tech); font-size: 0.88rem; font-weight: 800; color: var(--primary-cyan); margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.4rem;">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="3" width="7" height="7" />
             <rect x="14" y="3" width="7" height="7" />
             <rect x="14" y="14" width="7" height="7" />
             <rect x="3" y="14" width="7" height="7" />
           </svg>
-          SECTOR STATUS GRID
+          4-QUADRANT SECTOR STATUS GRID
         </div>
-        <div id="sectorStatusPanel" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:0.45rem;">
-          <!-- Dynamically populated by JS -->
-          <div
-            style="background:rgba(0,242,254,0.05);border:1px solid rgba(0,242,254,0.25);border-radius:var(--radius-sm);padding:0.45rem 0.6rem;text-align:center;">
-            <div style="font-family:var(--font-tech);font-weight:800;font-size:1.1rem;color:#00f2fe;">A</div>
-            <div style="font-family:var(--font-tech);font-size:0.6rem;color:#94a3b8;margin-bottom:2px;">NW Quadrant
-            </div>
-            <div style="font-family:var(--font-mono);font-size:0.65rem;color:#4e6178;font-weight:700;">STANDBY</div>
+        <div id="sectorStatusPanel">
+          <div style="background:rgba(0,242,254,0.06);border:1px solid rgba(0,242,254,0.3);border-radius:var(--radius-sm);padding:0.5rem;text-align:center;">
+            <div style="font-family:var(--font-tech);font-weight:800;font-size:1.15rem;color:#00f2fe;">A</div>
+            <div style="font-family:var(--font-tech);font-size:0.65rem;color:#cbd5e1;margin-bottom:2px;">NW Quadrant</div>
+            <div style="font-family:var(--font-mono);font-size:0.68rem;color:#94a3b8;font-weight:700;">STANDBY</div>
           </div>
-          <div
-            style="background:rgba(251,191,36,0.05);border:1px solid rgba(251,191,36,0.25);border-radius:var(--radius-sm);padding:0.45rem 0.6rem;text-align:center;">
-            <div style="font-family:var(--font-tech);font-weight:800;font-size:1.1rem;color:#fbbf24;">B</div>
-            <div style="font-family:var(--font-tech);font-size:0.6rem;color:#94a3b8;margin-bottom:2px;">NE Quadrant
-            </div>
-            <div style="font-family:var(--font-mono);font-size:0.65rem;color:#4e6178;font-weight:700;">STANDBY</div>
+          <div style="background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.3);border-radius:var(--radius-sm);padding:0.5rem;text-align:center;">
+            <div style="font-family:var(--font-tech);font-weight:800;font-size:1.15rem;color:#fbbf24;">B</div>
+            <div style="font-family:var(--font-tech);font-size:0.65rem;color:#cbd5e1;margin-bottom:2px;">NE Quadrant</div>
+            <div style="font-family:var(--font-mono);font-size:0.68rem;color:#94a3b8;font-weight:700;">STANDBY</div>
           </div>
-          <div
-            style="background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.25);border-radius:var(--radius-sm);padding:0.45rem 0.6rem;text-align:center;">
-            <div style="font-family:var(--font-tech);font-weight:800;font-size:1.1rem;color:#10b981;">C</div>
-            <div style="font-family:var(--font-tech);font-size:0.6rem;color:#94a3b8;margin-bottom:2px;">SW Quadrant
-            </div>
-            <div style="font-family:var(--font-mono);font-size:0.65rem;color:#4e6178;font-weight:700;">STANDBY</div>
+          <div style="background:rgba(16,185,129,0.06);border:1px solid rgba(16,185,129,0.3);border-radius:var(--radius-sm);padding:0.5rem;text-align:center;">
+            <div style="font-family:var(--font-tech);font-weight:800;font-size:1.15rem;color:#10b981;">C</div>
+            <div style="font-family:var(--font-tech);font-size:0.65rem;color:#cbd5e1;margin-bottom:2px;">SW Quadrant</div>
+            <div style="font-family:var(--font-mono);font-size:0.68rem;color:#94a3b8;font-weight:700;">STANDBY</div>
           </div>
-          <div
-            style="background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.25);border-radius:var(--radius-sm);padding:0.45rem 0.6rem;text-align:center;">
-            <div style="font-family:var(--font-tech);font-weight:800;font-size:1.1rem;color:#8b5cf6;">D</div>
-            <div style="font-family:var(--font-tech);font-size:0.6rem;color:#94a3b8;margin-bottom:2px;">SE Quadrant
-            </div>
-            <div style="font-family:var(--font-mono);font-size:0.65rem;color:#4e6178;font-weight:700;">STANDBY</div>
+          <div style="background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.3);border-radius:var(--radius-sm);padding:0.5rem;text-align:center;">
+            <div style="font-family:var(--font-tech);font-weight:800;font-size:1.15rem;color:#8b5cf6;">D</div>
+            <div style="font-family:var(--font-tech);font-size:0.65rem;color:#cbd5e1;margin-bottom:2px;">SE Quadrant</div>
+            <div style="font-family:var(--font-mono);font-size:0.68rem;color:#94a3b8;font-weight:700;">STANDBY</div>
           </div>
         </div>
       </div>
 
-      <!-- Subsurface Person Positioning & Precision Inspector -->
-      <div class="subsurface-inspector-card" id="subsurfaceInspectorCard" style="margin-top: 0.9rem;">
+      <!-- Subsurface Person Positioning & Precision Stratum Inspector -->
+      <div class="subsurface-inspector-card" id="subsurfaceInspectorCard" style="margin-top: 0.85rem;">
         <div class="subsurface-header">
           <div class="subsurface-title">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <circle cx="12" cy="12" r="10" />
               <path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M4.93 19.07l14.14-14.14" />
             </svg>
-            SUBSURFACE PERSON LOCATOR & DIAGNOSTICS
+            SUBSURFACE PERSON LOCATOR & STRATUM PROFILE
           </div>
           <div class="precision-badge-glow" id="subsurfacePrecisionBadge">PRECISION: 100.0%</div>
         </div>
@@ -542,7 +395,7 @@
               <div class="soil-layer-bedrock" title="Dense Bedrock Layer (2.5m - 5.0m)"></div>
               <div class="soil-grid-hatch"></div>
 
-              <!-- Depth Ruler / Scale markings -->
+              <!-- Depth Ruler -->
               <div class="depth-ruler">
                 <span>0m</span>
                 <span>-1m</span>
@@ -552,10 +405,10 @@
                 <span>-5m</span>
               </div>
 
-              <!-- Surface level green indicator -->
+              <!-- Surface level green line -->
               <div class="soil-surface-line" title="Ground Surface Line (0.0m)"></div>
 
-              <!-- Subsurface Probe Guide Line -->
+              <!-- Subsurface Probe Line -->
               <div class="subsurface-probe-line" id="subsurfaceProbeLine" style="height: 35%;"></div>
 
               <!-- Buried Person Target Marker -->
@@ -570,7 +423,7 @@
                 <div class="buried-depth-indicator" id="buriedDepthText">Z = -1.85m</div>
               </div>
 
-              <!-- NO target scan alert text -->
+              <!-- No Target Alert -->
               <div class="no-target-alert" id="noTargetAlert" style="display: none;">
                 NO SUBSURFACE BIOMASS DETECTED IN SCAN SECTOR
               </div>
@@ -607,21 +460,23 @@
           </div>
         </div>
       </div>
-
     </section>
 
-    <!-- Column 3: Signal Spectrum Analytics & File Upload -->
+    <!-- =========================================================================
+         COLUMN 3: SIGNAL SPECTRUM, HARDWARE NODES & BIO SIMULATOR
+         ========================================================================= -->
     <section class="card-panel panel-charts">
       <div class="panel-header">
         <div class="panel-title">
           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
             <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
           </svg>
-          SIGNAL ANALYTICS & SPECTRUM
+          SIGNAL ANALYTICS & HARDWARE NODES
         </div>
-        <span class="panel-badge">LIVE ANALYTICS</span>
+        <span class="panel-badge">LIVE SENSORS</span>
       </div>
 
+      <!-- Chart Switcher Tabs -->
       <div class="chart-tabs">
         <button class="tab-btn active" id="tabHarmonics">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -651,6 +506,7 @@
         <span id="chartInsightText">Initiate search scan to view live signal spectrum harmonics.</span>
       </div>
 
+      <!-- Chart Wrappers -->
       <div class="chart-wrapper chart-container-item" id="wrapperHarmonics">
         <canvas id="chartHarmonics"></canvas>
       </div>
@@ -661,108 +517,217 @@
         <canvas id="chartHistory"></canvas>
       </div>
 
-      <div class="panel-upload-report" style="margin-top: 1.1rem;">
-
-        <!-- Human Bio-Signal Analyzer & Vitals Simulator Controls -->
-        <div class="human-analysis-card">
-          <div class="human-analysis-title">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <path
-                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-            </svg>
-            HUMAN BIO-SIGNAL ANALYZER & CONTROLS
+      <!-- Dual Hardware Edge Nodes Panel (Live ESP32 Sensors + ESP32-CAM) -->
+      <div class="hardware-nodes-grid">
+        <!-- Box 1: ESP32 Live Sensors -->
+        <div class="esp32-telemetry-panel">
+          <div
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; border-bottom: 1px dashed rgba(245, 158, 11, 0.25); padding-bottom: 0.35rem;">
+            <div style="display: flex; align-items: center; gap: 0.45rem;">
+              <span class="pulse-telemetry-led led-pulse-inactive" id="espLed"
+                style="width: 8px; height: 8px; border-radius: 50%; background: #6b7280; display: inline-block; flex-shrink: 0;"></span>
+              <strong
+                style="color: var(--primary-cyan); font-size: 0.78rem; font-family: var(--font-mono); letter-spacing: 0.5px; white-space: nowrap;">LIVE ESP32 SENSORS</strong>
+            </div>
+            <label class="switch-container">
+              <span
+                style="font-size: 0.65rem; color: var(--text-muted); font-family: var(--font-mono); margin-right: 0.35rem;"
+                id="espToggleText">OFFLINE</span>
+              <input type="checkbox" id="espTelemetryToggle">
+              <div class="custom-toggle-track">
+                <div class="custom-toggle-thumb"></div>
+              </div>
+            </label>
           </div>
 
-          <div class="vitals-input-grid">
-            <div class="vital-slider-group">
-              <div class="vital-slider-header">
-                <span>HEARTBEAT (PULSE)</span>
-                <strong id="heartbeatValDisplay" style="color: #f43f5e;">69 BPM</strong>
-              </div>
-              <input type="range" id="sliderHeartbeat" min="0" max="140" value="69" step="1" class="cyber-slider">
-            </div>
-
-            <div class="vital-slider-group">
-              <div class="vital-slider-header">
-                <span>RESPIRATION (BREATH)</span>
-                <strong id="breathingValDisplay" style="color: #00f2fe;">18 BPM</strong>
-              </div>
-              <input type="range" id="sliderBreathing" min="0" max="36" value="18" step="1" class="cyber-slider">
-            </div>
-
-            <div class="vital-slider-group">
-              <div class="vital-slider-header">
-                <span>TARGET DEPTH</span>
-                <strong id="depthValDisplay" style="color: var(--accent-amber);">1.85 M</strong>
-              </div>
-              <input type="range" id="sliderDepth" min="0.3" max="5.0" value="1.85" step="0.05" class="cyber-slider">
-            </div>
-          </div>
-
-          <!-- Human Vitals Quick Presets -->
-          <div class="human-presets-row">
-            <button class="btn-preset-mini active" id="presetStandardHuman"
-              title="Standard Trapped Human (69 BPM pulse, 18 BPM breath)">Standard Victim</button>
-            <button class="btn-preset-mini" id="presetCriticalTachy"
-              title="Critical Stress (114 BPM Tachycardia, 26 BPM Breath)">Critical Victim</button>
-            <button class="btn-preset-mini" id="presetShallowHypopnea"
-              title="Shallow Breathing / Hypoxia (54 BPM Bradycardia, 9 BPM Breath)">Shallow Vitals</button>
-            <button class="btn-preset-mini" id="presetClearDebris"
-              title="Debris Echo (0 BPM pulse - Clear Matrix)">Debris Echo (Clear)</button>
+          <div id="espTelemetryDetails"
+            style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.4rem 0.6rem; font-size: 0.72rem; font-family: var(--font-mono);">
+            <div style="color: var(--text-dim);">PIR: <span id="espPir" style="color: #fff; font-weight: bold;">--</span></div>
+            <div style="color: var(--text-dim);">RSSI: <span id="espRssi" style="color: #fff; font-weight: bold;">--</span></div>
+            <div style="color: var(--text-dim);">Radar: <span id="espRadarState" style="color: #fff; font-weight: bold;">--</span></div>
+            <div style="color: var(--text-dim);">Range: <span id="espRadarDist" style="color: #fff; font-weight: bold;">--</span></div>
+            <div style="color: var(--text-dim);">Temp: <span id="espTemp" style="color: #fff; font-weight: bold;">--</span></div>
+            <div style="color: var(--text-dim);">Humid: <span id="espHumid" style="color: #fff; font-weight: bold;">--</span></div>
           </div>
         </div>
 
-        <!-- Upload Dropzone -->
-        <div class="upload-dropzone" id="uploadDropzone" title="Click or Drag & Drop CSV / GPR scan file"
-          style="position: relative; overflow: hidden;">
-          <input type="file" id="fileInputSim" accept=".csv,.gpr,.png,.jpg,.json,.txt"
-            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10;">
-          <div class="upload-icon">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="17 8 12 3 7 8" />
-              <line x1="12" y1="3" x2="12" y2="15" />
-            </svg>
+        <!-- Box 2: ESP32-CAM Optical AI Node -->
+        <div class="esp32-cam-panel">
+          <div
+            style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; border-bottom: 1px dashed rgba(245, 158, 11, 0.25); padding-bottom: 0.35rem;">
+            <div style="display: flex; align-items: center; gap: 0.4rem;">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                style="color: var(--primary-cyan); flex-shrink: 0;">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                <circle cx="12" cy="13" r="4" />
+              </svg>
+              <strong
+                style="color: var(--primary-cyan); font-size: 0.78rem; font-family: var(--font-mono); letter-spacing: 0.5px; white-space: nowrap;">ESP32-CAM OPTICAL</strong>
+            </div>
+            <button id="btnCamModelInfo" class="btn-preset-mini"
+              style="font-size: 0.65rem; padding: 2px 6px; margin: 0;"
+              title="View ESP32 Camera Models & Pinouts">PINOUTS</button>
           </div>
-          <div class="upload-text" id="uploadTextLabel">Upload Custom GPR Scan / CSV File</div>
-          <div class="upload-hint">Click to browse or Drag & Drop CSV dataset to run AI prediction</div>
-        </div>
 
-        <!-- File Details Box (Shown when file loaded) -->
-        <div id="fileInfoBox" class="file-info-box" style="display: none;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-            <span id="fileInfoName" style="font-weight: 700; color: var(--primary-cyan);">filename.csv</span>
-            <span id="fileInfoRows" class="badge-mini">16 ROWS</span>
+          <!-- Video Stream Container -->
+          <div class="cam-stream-container">
+            <img id="espCamStreamImg" src="" alt="ESP32-CAM Live Feed"
+              style="width: 100%; height: 100%; object-fit: cover; display: none;" />
+            <div id="espCamPlaceholder"
+              style="text-align: center; color: var(--text-muted); font-size: 0.72rem; font-family: var(--font-mono); padding: 0.4rem;">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                style="margin: 0 auto 0.3rem; display: block; opacity: 0.6;">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                <circle cx="12" cy="13" r="4" />
+              </svg>
+              <span id="espCamStatusText">CAMERA NODE OFFLINE</span>
+            </div>
+            <div id="espCamOverlayBadge"
+              style="position: absolute; top: 5px; left: 5px; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); border: 1px solid var(--border-color); border-radius: 3px; padding: 2px 6px; font-family: var(--font-mono); font-size: 0.62rem; color: #fff; display: flex; align-items: center; gap: 4px; z-index: 15;">
+              <span id="espCamDot"
+                style="width: 5px; height: 5px; border-radius: 50%; background: #9ca3af; display: inline-block;"></span>
+              <span id="espCamModelBadge">AI-THINKER</span>
+            </div>
+            <div id="espCamYoloAlert"
+              style="display: none; position: absolute; top: 5px; right: 5px; background: rgba(239,68,68,0.92); backdrop-filter: blur(4px); border: 1px solid #ef4444; border-radius: 3px; padding: 2.5px 6px; font-family: var(--font-mono); font-size: 0.62rem; color: #fff; z-index: 15; font-weight: 700; letter-spacing: 0.5px; animation: blinker 1.2s linear infinite;">
+              ⚠ HUMAN DETECTED
+            </div>
           </div>
-          <div id="fileInfoSummary" style="font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono);">
-            Scan Date: 2026-07-27 | Target Peak @ 1.85m
+
+          <!-- Quick Source Presets & IP Connect -->
+          <div style="margin-top: 0.5rem; display: flex; flex-direction: column; gap: 0.35rem;">
+            <div style="display: flex; gap: 0.25rem; font-size: 0.62rem; font-family: var(--font-mono);">
+              <button id="btnPresetEspCam" class="btn-preset-mini"
+                style="flex: 1; padding: 3px 6px; font-size: 0.68rem; margin: 0;"
+                title="Connect to ESP32-CAM (192.168.4.2/stream)">ESP32-CAM</button>
+              <button id="btnPresetWebcam" class="btn-preset-mini"
+                style="flex: 1; padding: 3px 6px; font-size: 0.68rem; margin: 0; color: var(--primary-cyan); border-color: rgba(245,158,11,0.3);"
+                title="Stream & Detect from Local PC/Laptop Webcam">PC WEBCAM</button>
+            </div>
+
+            <div style="display: flex; gap: 0.35rem;">
+              <input type="text" id="inputCamIp" placeholder="192.168.4.2/stream, :81, or webcam"
+                style="flex: 1; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); color: #fff; border-radius: 3px; padding: 3px 8px; font-family: var(--font-mono); font-size: 0.72rem; outline: none;" />
+              <button id="btnConnectCam"
+                style="background: var(--primary-cyan); border: none; color: #040711; font-weight: 800; border-radius: 3px; font-size: 0.72rem; padding: 3px 12px; cursor: pointer; white-space: nowrap;">CONNECT</button>
+            </div>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.25rem;">
+              <button id="btnToggleFlash" class="btn-preset-mini"
+                style="margin: 0; padding: 3px 2px; font-size: 0.65rem; white-space: nowrap;" title="Toggle Onboard Flash LED">FLASH</button>
+              <button id="btnCaptureSnapshot" class="btn-preset-mini"
+                style="margin: 0; padding: 3px 2px; font-size: 0.65rem; white-space: nowrap;"
+                title="Capture Frame for AI Analysis">SNAPSHOT</button>
+              <button id="btnToggleYolo" class="btn-preset-mini"
+                style="margin: 0; padding: 3px 2px; font-size: 0.65rem; white-space: nowrap;"
+                title="Toggle YOLOv8 Human Object Detection">YOLO AI: OFF</button>
+              <button id="btnDemoCamStream" class="btn-preset-mini"
+                style="margin: 0; padding: 3px 2px; font-size: 0.65rem; white-space: nowrap;"
+                title="Toggle Synthetic Demo Stream">DEMO FEED</button>
+            </div>
           </div>
         </div>
+      </div>
 
-        <button class="btn-main btn-secondary" id="btnLoadSampleCsv"
-          style="width: 100%; justify-content: center; margin-bottom: 0.9rem; font-weight: 700; border-color: rgba(0, 242, 254, 0.4); text-transform: uppercase; letter-spacing: 1px; font-size: 0.8rem; box-shadow: 0 0 10px rgba(0, 242, 254, 0.1);">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-            style="margin-right: 0.35rem;">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-            <polyline points="14 2 14 8 20 8" />
+      <!-- Human Bio-Signal Analyzer & Vitals Simulator Controls -->
+      <div class="human-analysis-card">
+        <div class="human-analysis-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path
+              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
           </svg>
-          RUN TEST DEMO SCAN
-        </button>
-
-        <div class="report-summary-box" id="reportConsoleBox">
-          <div class="report-row"><span class="report-key">AI ENGINE:</span> <span class="report-val">Multi-Channel
-              Analytics Engine</span></div>
-          <div class="report-row"><span class="report-key">ACCURACY SCORE:</span> <span class="report-val"
-              style="color: var(--accent-emerald)">98.6%</span></div>
-          <div class="report-row"><span class="report-key">SCAN STATUS:</span> <span class="report-val">READY FOR SCAN
-              SEQUENCE</span></div>
+          HUMAN BIO-SIGNAL ANALYZER & SIMULATOR
         </div>
+
+        <div class="vitals-input-grid">
+          <div class="vital-slider-group">
+            <div class="vital-slider-header">
+              <span>HEARTBEAT (PULSE)</span>
+              <strong id="heartbeatValDisplay" style="color: #ef4444;">69 BPM</strong>
+            </div>
+            <input type="range" id="sliderHeartbeat" min="0" max="140" value="69" step="1" class="cyber-slider">
+          </div>
+
+          <div class="vital-slider-group">
+            <div class="vital-slider-header">
+              <span>RESPIRATION (BREATH)</span>
+              <strong id="breathingValDisplay" style="color: var(--accent-radar);">18 BPM</strong>
+            </div>
+            <input type="range" id="sliderBreathing" min="0" max="36" value="18" step="1" class="cyber-slider">
+          </div>
+
+          <div class="vital-slider-group">
+            <div class="vital-slider-header">
+              <span>TARGET DEPTH</span>
+              <strong id="depthValDisplay" style="color: var(--accent-amber);">1.85 M</strong>
+            </div>
+            <input type="range" id="sliderDepth" min="0.3" max="5.0" value="1.85" step="0.05" class="cyber-slider">
+          </div>
+        </div>
+
+        <!-- Human Vitals Quick Presets -->
+        <div class="human-presets-row">
+          <button class="btn-preset-mini active" id="presetStandardHuman"
+            title="Standard Trapped Human (69 BPM pulse, 18 BPM breath)">Standard Victim</button>
+          <button class="btn-preset-mini" id="presetCriticalTachy"
+            title="Critical Stress (114 BPM Tachycardia, 26 BPM Breath)">Critical Victim</button>
+          <button class="btn-preset-mini" id="presetShallowHypopnea"
+            title="Shallow Breathing / Hypoxia (54 BPM Bradycardia, 9 BPM Breath)">Shallow Vitals</button>
+          <button class="btn-preset-mini" id="presetClearDebris"
+            title="Debris Echo (0 BPM pulse - Clear Matrix)">Debris Echo (Clear)</button>
+        </div>
+      </div>
+
+      <!-- Upload Dropzone & Test Demo Scan -->
+      <div class="upload-dropzone" id="uploadDropzone" title="Click or Drag & Drop CSV / GPR scan file"
+        style="position: relative; overflow: hidden;">
+        <input type="file" id="fileInputSim" accept=".csv,.gpr,.png,.jpg,.json,.txt"
+          style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; z-index: 10;">
+        <div class="upload-icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--primary-cyan);">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+        </div>
+        <div class="upload-text" id="uploadTextLabel">Upload Custom GPR Scan / CSV File</div>
+        <div class="upload-hint">Click to browse or Drag & Drop CSV dataset to run AI prediction</div>
+      </div>
+
+      <!-- File Details Box (Shown when file loaded) -->
+      <div id="fileInfoBox" class="file-info-box" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+          <span id="fileInfoName" style="font-weight: 700; color: var(--primary-cyan);">filename.csv</span>
+          <span id="fileInfoRows" class="badge-mini">16 ROWS</span>
+        </div>
+        <div id="fileInfoSummary" style="font-size: 0.7rem; color: var(--text-muted); font-family: var(--font-mono);">
+          Scan Date: 2026-07-27 | Target Peak @ 1.85m
+        </div>
+      </div>
+
+      <!-- Hero Test Demo Scan Button -->
+      <button class="btn-main btn-secondary" id="btnLoadSampleCsv"
+        style="width: 100%; justify-content: center; margin-bottom: 0.85rem; font-weight: 800; border-color: rgba(245, 158, 11, 0.4); text-transform: uppercase; letter-spacing: 1px; font-size: 0.82rem; box-shadow: 0 0 14px rgba(245, 158, 11, 0.15);">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          style="margin-right: 0.4rem; color: var(--primary-cyan);">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+          <polyline points="14 2 14 8 20 8" />
+        </svg>
+        RUN TEST DEMO SCAN
+      </button>
+
+      <!-- Live AI Console Box -->
+      <div class="report-summary-box" id="reportConsoleBox">
+        <div class="report-row"><span class="report-key">AI ENGINE:</span> <span class="report-val">Multi-Channel Analytics Engine</span></div>
+        <div class="report-row"><span class="report-key">ACCURACY SCORE:</span> <span class="report-val" style="color: var(--accent-emerald)">98.6%</span></div>
+        <div class="report-row"><span class="report-key">SCAN STATUS:</span> <span class="report-val">READY FOR SCAN SEQUENCE</span></div>
       </div>
     </section>
 
   </main>
 
-  <!-- Interactive Rescue Mission Report Modal -->
+  <!-- =========================================================================
+       RESCUE OPERATION MISSION REPORT MODAL
+       ========================================================================= -->
   <div class="modal-overlay" id="reportModal" style="display: none;">
     <div class="modal-card">
       <div class="modal-header">
@@ -803,7 +768,9 @@
     </div>
   </div>
 
-  <!-- ESP32-CAM Camera Model & Pinouts Reference Modal -->
+  <!-- =========================================================================
+       ESP32-CAM CAMERA MODELS & PINOUTS MODAL
+       ========================================================================= -->
   <div class="modal-overlay" id="camModelModal" style="display: none;">
     <div class="modal-card" style="max-width: 680px;">
       <div class="modal-header">
@@ -826,7 +793,7 @@
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem;">
           <div
-            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(0, 242, 254, 0.25); border-radius: 4px; padding: 0.75rem;">
+            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(245, 158, 11, 0.3); border-radius: 4px; padding: 0.75rem;">
             <div style="font-weight: 700; color: var(--primary-cyan); margin-bottom: 0.4rem;">1. AI-THINKER ESP32-CAM
             </div>
             <div style="color: var(--text-muted); font-size: 0.72rem; line-height: 1.4;">
@@ -839,7 +806,7 @@
           </div>
 
           <div
-            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 4px; padding: 0.75rem;">
+            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 4px; padding: 0.75rem;">
             <div style="font-weight: 700; color: var(--accent-emerald); margin-bottom: 0.4rem;">2. ESP-EYE</div>
             <div style="color: var(--text-muted); font-size: 0.72rem; line-height: 1.4;">
               • Macro: <code style="color:#fff">CAMERA_MODEL_ESP_EYE</code><br>
@@ -851,7 +818,7 @@
           </div>
 
           <div
-            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(251, 191, 36, 0.25); border-radius: 4px; padding: 0.75rem;">
+            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 4px; padding: 0.75rem;">
             <div style="font-weight: 700; color: var(--accent-amber); margin-bottom: 0.4rem;">3. WROVER-KIT</div>
             <div style="color: var(--text-muted); font-size: 0.72rem; line-height: 1.4;">
               • Macro: <code style="color:#fff">CAMERA_MODEL_WROVER_KIT</code><br>
@@ -863,7 +830,7 @@
           </div>
 
           <div
-            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(168, 85, 247, 0.25); border-radius: 4px; padding: 0.75rem;">
+            style="background: rgba(255,255,255,0.03); border: 1px solid rgba(168, 85, 247, 0.3); border-radius: 4px; padding: 0.75rem;">
             <div style="font-weight: 700; color: #a855f7; margin-bottom: 0.4rem;">4. SEEED XIAO ESP32S3</div>
             <div style="color: var(--text-muted); font-size: 0.72rem; line-height: 1.4;">
               • Macro: <code style="color:#fff">CAMERA_MODEL_XIAO_ESP32S3</code><br>
@@ -890,9 +857,9 @@
     <span><span class="key-badge">R</span> EXPORT REPORT</span>
   </div>
 
+  <!-- Tactical Ground SAR Rover Footer -->
   <footer class="app-footer">
-    TERRA-SENSE AI Subsurface Human Bio-Detection & Search-and-Rescue System &copy; 2026. Powered by AI Analytics Engine
-    & WebGL.
+    RESCUE ROVER AI — Autonomous Tactical Ground SAR Rover Bio-Detection & Search System &copy; 2026. Powered by AI Analytics Engine & WebGL.
   </footer>
 
   <!-- Unified Standalone Script (deferred) -->
